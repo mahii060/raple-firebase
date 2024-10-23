@@ -1,5 +1,5 @@
 import './App.css'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import app from './firebase/firebase.config';
 import { useState } from 'react';
 
@@ -14,25 +14,26 @@ function App() {
   const handleGoogleLogin = () => {
     signInWithPopup(auth, googleProvider)
       .then(result => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
         const loggedInUser = result.user;
         setUser(loggedInUser)
-        console.log(loggedInUser, credential, token);
       })
       .catch(error => {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.log(errorCode, errorMessage);
       })
+  }
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => setUser(null))
+      .catch(error => console.log(error))
   }
 
   return (
     <>
       <h1>Firebase + React</h1>
       <button onClick={handleGoogleLogin}>Google Login</button>
+      <button onClick={handleSignOut}>Sign Out</button>
       {user &&
         <div>
           <h1>Name: {user.displayName}</h1>
